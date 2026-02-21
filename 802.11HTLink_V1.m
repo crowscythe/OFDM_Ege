@@ -1,5 +1,3 @@
-% 802.11n BER Simulation (AWGN Only) 
-% BER values printed to Command Window
 clear; clc;
 %ege alper uzun 23050211026
 %heavily referenced from https://www.mathworks.com/help/wlan/ug/802-11n-packet-error-rate-simulation-for-2x2-tgn-channel.html
