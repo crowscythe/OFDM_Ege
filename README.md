@@ -51,6 +51,13 @@ The simulation models a complete transmit (TX) and receive (RX) chain over an Ad
 * **Power Normalization:** The noise variance is calculated precisely using the $E_b/N_0$ ratio. The script accounts for the coding rate, the cyclic prefix overhead, and the empty FFT bins to ensure the plotted $E_b/N_0$ perfectly aligns with theoretical bounds.
 
 ---
+📊 Simulation Results
+
+The transceiver's Bit Error Rate (BER) performance is evaluated across different Signal-to-Noise (Eb​/N0​) thresholds. As the modulation order increases, the system transmits more bits per symbol but requires a higher Eb​/N0​ to maintain the same error rate.
+
+Below are the simulation plots for QPSK, 16-QAM, and 64-QAM, demonstrating the error-correction capability of the Viterbi decoder as it drives the BER to zero.
+QPSK Performance	16-QAM Performance	64-QAM Performance
+<img src="docs/qpsk_plot.png" width="300" alt="QPSK BER Plot">	<img src="docs/16qam_plot.png" width="300" alt="16-QAM BER Plot">	<img src="docs/64qam_plot.png" width="300" alt="64-QAM BER Plot">
 
 ## 🚀 Usage Guide
 
