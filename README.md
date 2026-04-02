@@ -2,7 +2,7 @@
 
 A complete, first-principles implementation of an Orthogonal Frequency-Division Multiplexing (OFDM) transceiver. 
 
-This script models a full physical layer (PHY) communication link in pure MATLAB. **It does not require the Communications Toolbox or any other external add-ons.** By implementing every digital signal processing (DSP) and error-correction block from scratch, this project serves as a transparent, white-box educational tool for understanding modern wireless communication standards (like Wi-Fi/802.11 and LTE/5G).
+This script models a full physical layer (PHY) communication link in pure MATLAB. **It does not require the Communications Toolbox or any other external add-ons.** 
 
 ---
 
@@ -37,11 +37,9 @@ The simulation models a complete transmit (TX) and receive (RX) chain over an Ad
 * **Coding Rate:** $r = 1/2$
 * **Constraint Length:** $K = 3$
 * **Generator Polynomials:** Octal `[7, 5]` (Binary `111` and `101`)
-* **Decoder:** Custom Hard-Decision Viterbi algorithm using Hamming distance for branch metrics. 
 
 ### Scrambler (PN Sequence)
 * **Polynomial:** $x^7 + x^4 + 1$
-* **Operation:** Standard Modulo-2 addition (XOR). The same LFSR structure is used at the receiver for descrambling.
 
 ### OFDM Framing
 * **FFT Size ($N_{fft}$):** 64 (configurable)
@@ -56,12 +54,9 @@ The simulation models a complete transmit (TX) and receive (RX) chain over an Ad
 
 ## 🚀 Usage Guide
 
-### Prerequisites
-* MATLAB (Tested on R2020a and newer).
-* **No toolboxes are required.**
 
 ### Running the Simulation
-Clone the repository and open `ofdm_transceiver.m`. At the top of the script, you can configure the system parameters:
+At the top of the script, you can configure the system parameters:
 
 ```matlab
 %% ========================= User parameters ==============================
