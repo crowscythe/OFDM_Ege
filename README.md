@@ -57,7 +57,7 @@ The transceiver's Bit Error Rate (BER) performance is evaluated across different
 
 Below are the simulation plots for QPSK, 16-QAM, and 64-QAM, demonstrating the error-correction capability of the Viterbi decoder as it drives the BER to zero.
 QPSK Performance	16-QAM Performance	64-QAM Performance
-<img src="QPSK_BER.png" width="300" alt="QPSK BER Plot">	<img src="docs/16QAM_BER.png" width="300" alt="16-QAM BER Plot">	<img src="docs/64QAM_BER.png" width="300" alt="64-QAM BER Plot">
+<img src="QPSK_BER.png" width="300" alt="QPSK BER Plot">	<img src="16QAM_BER.png" width="300" alt="16-QAM BER Plot">	<img src="64QAM_BER.png" width="300" alt="64-QAM BER Plot">
 
 ## 🚀 Usage Guide
 
