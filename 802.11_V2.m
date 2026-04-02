@@ -83,7 +83,7 @@ for k = 1:length(candidateRows)
 end
 interCols = bitsPerOFDMSymbol / interRows;
 
-% FEC Setup: Rate 1/2, K=3. Needs 2 zeros to flush memory to state 00.
+% FEC Setup: Rate 1/2
 numUncodedBits = (numTxCodedBits / 2) - 2; 
 
 fprintf('Modulation                : %s\n', modType);
@@ -106,7 +106,7 @@ for n = 1:numUncodedBits
 end
 scrambledUncodedBits = mod(txUncodedBits + pnSeq, 2);
 
-%% FEC: Rate-1/2 Convolutional Encoder (K=3)
+%% FEC: Rate-1/2 Convolutional Encoder
 % Generator polynomials: [7, 5] in octal -> 111 and 101 binary
 paddedBits = [scrambledUncodedBits; 0; 0]; % Append 2 flush bits
 txCodedBits = zeros(numTxCodedBits, 1);
@@ -201,7 +201,7 @@ for snrIdx = 0:length(EbNoDbVec)
     Hhat = mean(HhatPilots, 1);                          
     rxDataEq = rxData ./ repmat(Hhat, numDataSubc, 1);  
 
-    %% QAM demapper (Hard Decision)
+    %% QAM demapper
     rxDataSymbols = rxDataEq(:);
     switch modType
         case 'QPSK'
@@ -232,7 +232,7 @@ for snrIdx = 0:length(EbNoDbVec)
     end
     rxCodedBits = rxDeinterleavedBitBlocks(:);
 
-    %% FEC: Viterbi Decoder (Hard Decision, K=3)
+    %% FEC
     N_trellis = numTxCodedBits / 2;
     nextState = [1 2; 3 4; 1 2; 3 4];  % State transitions
     expectedOut = zeros(4, 2, 2);      % Expected output bits
