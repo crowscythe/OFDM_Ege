@@ -55,7 +55,7 @@ The simulation models a complete transmit (TX) and receive (RX) chain over an Ad
 
 The transceiver's Bit Error Rate (BER) performance is evaluated across different Signal-to-Noise (Eb​/N0​) thresholds. As the modulation order increases, the system transmits more bits per symbol but requires a higher Eb​/N0​ to maintain the same error rate.
 
-Below are the simulation plots for QPSK, 16-QAM, and 64-QAM, demonstrating the error-correction capability of the Viterbi decoder as it drives the BER to zero.
+Below are the simulation plots for QPSK, 16-QAM, and 64-QAM.
 | QPSK Performance | 16-QAM Performance | 64-QAM Performance |
 | :---: | :---: | :---: |
 | <img src="QPSK_BER.png" width="300" alt="QPSK BER"> | <img src="16QAM_BER.png" width="300" alt="16-QAM BER"> | <img src="64QAM_BER.png" width="300" alt="64-QAM BER"> |
