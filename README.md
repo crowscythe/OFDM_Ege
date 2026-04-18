@@ -1,75 +1,192 @@
-# 📡 Base-MATLAB OFDM Transceiver with FEC
+📡 Base-MATLAB OFDM Transceiver with FEC
 
-A complete, first-principles implementation of an Orthogonal Frequency-Division Multiplexing (OFDM) transceiver. 
+A complete, first-principles implementation of an Orthogonal Frequency-Division Multiplexing (OFDM) transceiver.
 
-This script models a full physical layer (PHY) communication link in pure MATLAB. **It does not require the Communications Toolbox or any other external add-ons.** 
+This script models a full physical layer (PHY) communication link in pure MATLAB. It does not require the Communications Toolbox or any other external add-ons.
 
----
+🛠️ System Architecture
 
-## 🛠️ System Architecture
+The simulation models a complete transmit (TX) and receive (RX) chain over an Additive White Gaussian Noise (AWGN) channel.
 
-The simulation models a complete transmit (TX) and receive (RX) chain over an Additive White Gaussian Noise (AWGN) channel. 
+📡 HT Packet Structure
 
-### Transmit Chain (TX)
-1. **Data Generation:** Generates a randomized payload of raw binary data.
-2. **Scrambling:** Whitens the data using a Linear Feedback Shift Register (LFSR) to prevent long sequences of 1s or 0s.
-3. **Convolutional Encoding (FEC):** Adds redundancy using a Rate-1/2 convolutional code ($K=3$) to allow the receiver to correct bit errors.
-4. **Block Interleaving:** Scatters adjacent bits across the OFDM block to protect against burst errors.
-5. **QAM Mapping:** Maps the interleaved bits into complex baseband symbols (QPSK, 16-QAM, or 64-QAM) using Gray coding and unit-power normalization.
-6. **Pilot Insertion:** Inserts known BPSK pilot symbols at designated subcarrier indices for channel estimation.
-7. **OFDM Modulation (IFFT):** Converts the frequency-domain subcarriers into a time-domain OFDM symbol.
-8. **Cyclic Prefix (CP):** Prepends the tail of the OFDM symbol to the front to eliminate Inter-Symbol Interference (ISI).
+The transmitter generates a simplified IEEE 802.11n High Throughput (HT) packet. The time-domain waveform is formed by concatenating:
 
-### Receive Chain (RX)
-1. **CP Removal & FFT:** Discards the cyclic prefix and converts the time-domain signal back to the frequency domain.
-2. **Channel Estimation & Equalization:** Extracts the pilot subcarriers, estimates the channel phase/amplitude shifts, and applies a Zero-Forcing (ZF) equalizer to the data subcarriers.
-3. **QAM Demapping:** Performs minimum-distance hard-decision decoding to convert the complex symbols back into bits.
-4. **Deinterleaving:** Reverses the block interleaver to restore the original coded bit sequence.
-5. **Viterbi Decoding:** Uses a hard-decision Viterbi algorithm to decode the convolutional code and correct transmission errors.
-6. **Descrambling:** Reverses the LFSR modulo-2 addition to recover the original payload.
+HT-STF → HT-LTF → HT-SIG → HT-DATA
+🧱 HT Block Descriptions
+HT-STF (Short Training Field)
 
----
+Purpose:
 
-## 🔬 Mathematical & Technical Specifications
+AGC convergence
+Coarse timing synchronization
 
-### Forward Error Correction (FEC)
-* **Type:** Convolutional Encoder
-* **Coding Rate:** $r = 1/2$
-* **Constraint Length:** $K = 3$
-* **Generator Polynomials:** Octal `[7, 5]` (Binary `111` and `101`)
+Generation:
 
-### Scrambler (PN Sequence)
-* **Polynomial:** $x^7 + x^4 + 1$
+A sparse frequency-domain pattern is placed on every 4th used subcarrier
+IFFT produces a periodic time-domain waveform
+A segment of length N
+fft
+	​
 
-### OFDM Framing
-* **FFT Size ($N_{fft}$):** 64 (configurable)
-* **Active Subcarriers:** 52 total (48 Data, 4 Pilots)
-* **Subcarrier Indexing:** Zero-centered, omitting the DC carrier (`0`). Data bins: `[-26:-1 1:26]`.
+/4 is extracted and repeated
+No cyclic prefix is used
+HT-LTF (Long Training Field)
 
-### Noise & Channel Modeling
-* **Channel:** Additive White Gaussian Noise (AWGN).
-* **Power Normalization:** The noise variance is calculated precisely using the $E_b/N_0$ ratio. The script accounts for the coding rate, the cyclic prefix overhead, and the empty FFT bins to ensure the plotted $E_b/N_0$ perfectly aligns with theoretical bounds.
+Purpose:
 
----
+Channel estimation
+
+Generation:
+
+Known BPSK symbols are mapped onto all used subcarriers
+IFFT is applied
+Each OFDM symbol is normalized
+Cyclic prefix (CP) is added
+HT-SIG (Signal Field)
+
+Purpose:
+
+Carries control information (modulation, payload length, symbol count)
+
+Generation:
+
+Control bits are constructed and BPSK-mapped onto data subcarriers
+Pilot symbols are inserted at fixed pilot locations
+IFFT is applied
+Each symbol is normalized
+CP is added
+
+Note: The current receiver does not decode HT-SIG (placeholder).
+
+HT-DATA (Payload)
+
+Purpose:
+
+Payload transmission
+
+Generation:
+
+bits → scrambler → interleaver → QAM mapper
+→ pilot insertion → IFFT → normalization → CP
+Supports QPSK, 16-QAM, and 64-QAM
+Gray-coded constellations
+Fixed BPSK pilot symbols
+⚡ Power Normalization
+
+All OFDM symbols are normalized after IFFT and before CP insertion:
+
+P=
+N
+1
+	​
+
+∑∣x[n]∣
+2
+=1
+Applied independently to HT-LTF, HT-SIG, and each HT-DATA symbol
+HT-STF is normalized directly in the time domain
+Ensures consistent average power across all packet fields
+📶 SNR Definition
+
+SNR is defined per received complex time-domain sample:
+
+SNR=
+P
+noise
+	​
+
+P
+packet
+	​
+
+	​
+
+P
+packet
+	​
+
+: average power over the entire transmitted packet
+(HT-STF + HT-LTF + HT-SIG + HT-DATA + all CPs)
+AWGN is added as:
+n∼CN(0,σ
+2
+)
+Noise variance:
+σ
+2
+=
+10
+SNR/10
+P
+packet
+	​
+
+	​
+
+⚠️ Important Note
+CP and pilot symbols consume transmit energy but do not carry new payload bits
+Therefore, the effective E
+b
+	​
+
+/N
+0
+	​
+
+ is lower than the plotted sample SNR
+BER is computed only on HT-DATA payload bits
+🔁 TX/RX Processing Chains
+Transmit Chain (TX)
+Data generation
+Scrambling (LFSR)
+Block interleaving
+QAM mapping (Gray-coded, unit power)
+Pilot insertion
+OFDM modulation (IFFT)
+Power normalization
+Cyclic prefix (CP)
+HT packet assembly
+Receive Chain (RX)
+Ideal HT-DATA extraction (no sync yet)
+CP removal & FFT
+Pilot-based channel estimation (per-symbol)
+Equalization (Zero-Forcing)
+QAM demapping (hard decision)
+Deinterleaving
+Descrambling
+BER computation
+🔬 Mathematical & Technical Specifications
+Scrambler (PN Sequence)
+Polynomial: x
+7
++x
+4
++1
+OFDM Parameters
+FFT Size: 64
+Active Subcarriers: 52 (48 data, 4 pilots)
+Subcarrier indices: [-26:-1, 1:26] (DC excluded)
+Channel Model
+AWGN only
+No multipath, CFO, or timing offset (ideal conditions)
 📊 Simulation Results
 
-The transceiver's Bit Error Rate (BER) performance is evaluated across different Signal-to-Noise (Eb​/N0​) thresholds. As the modulation order increases, the system transmits more bits per symbol but requires a higher Eb​/N0​ to maintain the same error rate.
+The Bit Error Rate (BER) is evaluated versus SNR.
 
-Below are the simulation plots for QPSK, 16-QAM, and 64-QAM.
-| QPSK Performance | 16-QAM Performance | 64-QAM Performance |
-| :---: | :---: | :---: |
-| <img src="QPSK_BER.png" width="300" alt="QPSK BER"> | <img src="16QAM_BER.png" width="300" alt="16-QAM BER"> | <img src="64QAM_BER.png" width="300" alt="64-QAM BER"> |
+Higher-order modulations:
 
-## 🚀 Usage Guide
+increase spectral efficiency
+require higher SNR for the same BER
+QPSK Performance	16-QAM Performance	64-QAM Performance
+<img src="QPSK_BER.png" width="300">	<img src="16QAM_BER.png" width="300">	<img src="64QAM_BER.png" width="300">
+🚀 Usage Guide
+Running the Simulation
 
+Configure parameters at the top of the script:
 
-### Running the Simulation
-At the top of the script, you can configure the system parameters:
-
-```matlab
-%% ========================= User parameters ==============================
-modType = '16QAM';              % 'QPSK', '16QAM', or '64QAM'
-Nfft = 64;                      % FFT/IFFT size (must be even)
-cpLen = 16;                     % Cyclic prefix length
-numOFDMSymbols = 5000;          % Increase to resolve lower BER floors
-EbNoDbVec = 0:1:12;             % Eb/N0 sweep range in dB
+modType = '16QAM';      % 'QPSK', '16QAM', '64QAM'
+Nfft = 64;              % FFT size
+cpLen = 16;             % Cyclic prefix
+numOFDMSymbols = 500;   % Number of HT-DATA symbols
+snrDbVec = 0:2:24;      % SNR sweep
