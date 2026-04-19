@@ -20,60 +20,69 @@ The transmitter generates a simplified IEEE 802.11n High Throughput (HT) packet.
 
 ## 🧱 HT Block Descriptions
 
-### HT-STF (Short Training Field)
+## 🟢 HT-STF (High Throughput Short Training Field)
 
 **Purpose:**
+- Automatic Gain Control (AGC) convergence  
+- Packet detection  
+- Coarse timing synchronization  
+- Carrier Frequency Offset (CFO) estimation  
 
-  * AGC convergence
-  * Coarse timing synchronization
+**Structure:**
+- Constructed from a predefined frequency-domain sequence  
+- Designed to produce short periodic repetitions (~16 samples in time domain)  
+- No cyclic prefix (CP)  
 
-**Generation:**
+---
 
-  * A sparse frequency-domain pattern is placed on every 4th used subcarrier.
-  * IFFT produces a periodic time-domain waveform.
-  * A segment of length $N_{fft}/4$ is extracted and repeated.
-  * No cyclic prefix is used.
-
-### HT-LTF (Long Training Field)
-
-**Purpose:**
-
-  * Channel estimation
-
-**Generation:**
-
-  * Known BPSK symbols are mapped onto all used subcarriers.
-  * IFFT is applied.
-  * Each OFDM symbol is normalized.
-  * Cyclic prefix (CP) is added.
-
-### HT-SIG (Signal Field)
+## 🔵 HT-LTF (High Throughput Long Training Field)
 
 **Purpose:**
+- Channel estimation (including MIMO channel estimation)  
 
-  * Carries control information (modulation, payload length, symbol count).
+**Structure:**
+- Known BPSK-modulated sequence mapped onto subcarriers  
+- One or more OFDM symbols depending on the number of spatial streams  
+- Cyclic prefix (CP) included  
 
-**Generation:**
+---
 
-  * Control bits are constructed and BPSK-mapped onto data subcarriers.
-  * Pilot symbols are inserted at fixed pilot locations.
-  * IFFT is applied.
-  * Each symbol is normalized.
-  * CP is added.
-    *(Note: The current receiver does not decode HT-SIG; it acts as a placeholder).*
-
-### HT-DATA (Payload)
+## 🟣 HT-SIG (High Throughput Signal Field)
 
 **Purpose:**
+- Carries PHY control information:
+  - Modulation and Coding Scheme (MCS)  
+  - Payload length  
+  - Other transmission parameters  
 
-  * Payload transmission
+**Structure:**
+- Composed of **two OFDM symbols**  
+- BPSK modulation with **rate-1/2 convolutional coding**  
+- Standard OFDM processing chain:
+  - Subcarrier mapping  
+  - Pilot insertion  
+  - IFFT  
+  - Cyclic prefix (CP)  
 
-**Generation:**
+---
 
-  * `bits → scrambler → interleaver → QAM mapper → pilot insertion → IFFT → normalization → CP`
-  * Supports QPSK, 16-QAM, and 64-QAM.
-  * Gray-coded constellations.
-  * Fixed BPSK pilot symbols.
+## 🔴 HT-DATA (Payload)
+
+**Purpose:**
+- Transmission of user data  
+
+**Processing Chain:**
+bits → scrambler → FEC encoder → interleaver → QAM mapper → pilot insertion → IFFT → CP
+
+**Details:**
+- Supports modulation schemes:
+  - QPSK  
+  - 16-QAM  
+  - 64-QAM  
+- Uses Gray-coded constellations  
+- Pilot symbols:
+  - BPSK-modulated  
+  - Follow a predefined polarity sequence (time-varying)  
 
 -----
 
