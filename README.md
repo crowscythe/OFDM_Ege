@@ -194,7 +194,7 @@ The Bit Error Rate (BER) is evaluated versus SNR. Higher-order modulations incre
 
 | QPSK Performance | 16-QAM Performance | 64-QAM Performance |
 | :---: | :---: | :---: |
-| \<img src="QPSK\_BER.png" width="300" alt="QPSK BER"\> | \<img src="16QAM\_BER.png" width="300" alt="16-QAM BER"\> | \<img src="64QAM\_BER.png" width="300" alt="64-QAM BER"\> |
+| \<img src="QPSKBER.png" width="300" alt="QPSK BER"\> | \<img src="16QAMBER.png" width="300" alt="16-QAM BER"\> | \<img src="64QAMBER.png" width="300" alt="64-QAM BER"\> |
 
 -----
 
