@@ -4,9 +4,9 @@ A complete, first-principles implementation of an Orthogonal Frequency-Division 
 
 -----
 
-## 📡 Summary
+# 📡 Summary
 
-### 🧱 HT Packet Block Order
+## 🧱 HT Packet Block Order
 The time-domain waveform is concatenated in the following sequence:
 `[ HT-STF | HT-LTF | HT-SIG | HT-DATA ]`
 
