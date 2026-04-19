@@ -140,12 +140,6 @@ With the noise variance defined as:
 
 $$\sigma^2 = \frac{P_{packet}}{10^{SNR/10}}$$
 
-### ⚠️ Important Note
-
-  * CP and pilot symbols consume transmit energy but do not carry new payload bits.
-  * Therefore, the effective $E_b/N_0$ is lower than the plotted sample SNR.
-  * BER is computed only on HT-DATA payload bits.
-
 -----
 
 ## 🔁 TX/RX Processing Chains
