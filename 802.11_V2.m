@@ -2,96 +2,6 @@
 %==========================================================================
 % Simplified OFDM transceiver using only base MATLAB functions (no toolboxes)
 %
-% Extended with a simplified IEEE 802.11n High Throughput (HT) packet
-% waveform generator:
-%
-%   [ HT-STF | HT-LTF | HT-SIG | HT-DATA ]
-%
-% The existing OFDM payload PHY is kept and reused for HT-DATA.
-% In this revision, HT packetization is added on the transmit side.
-% The receiver still assumes ideal packet timing and directly extracts the
-% HT-DATA field for BER evaluation.
-%
-%==========================================================================
-% === HT PACKET STRUCTURE ===
-%
-% Block order:
-%   HT-STF -> HT-LTF -> HT-SIG -> HT-DATA
-%
-% HT-STF:
-%   Purpose:
-%     - AGC convergence
-%     - coarse timing synchronization
-%   Generation:
-%     - A sparse known frequency-domain pattern is placed on every 4th used
-%       subcarrier so that the time-domain IFFT output is periodic.
-%     - One short period is extracted and repeated multiple times.
-%     - No CP is added here because the repeated short symbol itself is the
-%       training structure.
-%
-% HT-LTF:
-%   Purpose:
-%     - channel estimation
-%   Generation:
-%     - Known BPSK values are placed on the full set of used subcarriers.
-%     - IFFT is applied, the time-domain OFDM symbol is normalized, and a
-%       cyclic prefix is added.
-%     - One or more HT-LTF symbols can be generated.
-%
-% HT-SIG:
-%   Purpose:
-%     - carries simplified modulation and length information
-%   Generation:
-%     - Placeholder control bits are BPSK-mapped on data subcarriers.
-%     - Fixed pilot symbols are inserted on pilot subcarriers.
-%     - IFFT is applied, each symbol is normalized, and CP is added.
-%     - The structure is present even though the receiver does not decode it
-%       yet in this simplified script.
-%
-% HT-DATA:
-%   Purpose:
-%     - payload transport
-%   Generation:
-%     - Existing OFDM payload chain is reused:
-%       bits -> scrambler -> block interleaver -> QAM mapper
-%       -> pilot insertion -> IFFT -> per-symbol normalization -> CP
-%
-% Power normalization strategy:
-%   - Each OFDM symbol is normalized to unit average power BEFORE CP.
-%   - This is applied independently to HT-LTF, HT-SIG, and each HT-DATA
-%     symbol after the IFFT.
-%   - HT-STF is normalized directly in time domain so that its repeated
-%     short symbol also has unit average power.
-%   - Because normalization is applied before CP, all packet fields have
-%     consistent sample power after concatenation.
-%
-% SNR definition used in this simulation:
-%   - SNR is defined per received complex time-domain sample.
-%   - Noise variance is computed from the average power of the ENTIRE
-%     transmitted packet, including HT-STF, HT-LTF, HT-SIG, HT-DATA, and
-%     all cyclic prefixes.
-%   - CP and pilots consume transmit energy but do not carry new payload
-%     bits, so the effective $E_b/N_0$ for payload bits is lower than the
-%     sample SNR shown on the BER plot.
-%
-%==========================================================================
-% TX chain summary:
-%   random bits -> scrambler -> block interleaver -> QAM mapper
-%   -> pilot insertion -> IFFT -> per-symbol normalization -> CP
-%   -> concatenate HT packet fields
-%
-% RX chain summary for BER:
-%   ideal HT-DATA extraction -> remove CP -> FFT -> subcarrier extraction
-%   -> pilot-based channel estimate -> equalization -> QAM demapper
-%   -> deinterleaver -> descrambler -> BER
-%
-% Note:
-% HT-STF, HT-LTF, and HT-SIG are generated explicitly and included in the
-% transmitted packet, but the current receiver does not yet use them.
-% A future extension would use:
-%   - HT-STF for coarse timing
-%   - HT-LTF for channel estimation
-%   - HT-SIG for decoding packet configuration
 %==========================================================================
 
 clear; clc; close all;
@@ -571,15 +481,7 @@ fprintf('  Packet   : %6d samples, avg power = %.4f\n', length(txPacket), txPack
 fprintf('  HT-DATA starts at packet sample index %d\n\n', idxHtDataStart);
 
 %% ============================ BER simulation ============================
-% BER is computed ONLY on the HT-DATA payload bits.
-% HT-STF, HT-LTF, HT-SIG, pilots, and cyclic prefixes are overhead and are
-% not counted in BER.
-%
-% Current receiver assumption:
-%   Since this revision adds HT packet fields on the transmit side only,
-%   packet detection, synchronization, and HT-SIG decoding are not yet
-%   implemented. The receiver therefore uses the known HT-DATA boundary and
-%   directly extracts the HT-DATA portion from the received packet.
+% BER is computed ONLY on the HT-DATA payload bits for now.
 
 ber = zeros(size(snrDbVec));
 
