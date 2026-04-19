@@ -193,9 +193,8 @@ $$\sigma^2 = \frac{P_{packet}}{10^{SNR/10}}$$
 The Bit Error Rate (BER) is evaluated versus SNR. Higher-order modulations increase spectral efficiency but require higher SNR for the same BER.
 
 | QPSK Performance | 16-QAM Performance | 64-QAM Performance |
-| :---: | :---: | :---: |
-| \<img src="QPSKBER.png" width="300" alt="QPSK BER"\> | \<img src="16QAMBER.png" width="300" alt="16-QAM BER"\> | \<img src="64QAMBER.png" width="300" alt="64-QAM BER"\> |
-
+|:---:|:---:|:---:|
+| <img src="QPSKBER.png" width="300"> | <img src="16QAMBER.png" width="300"> | <img src="64QAMBER.png" width="300"> |
 -----
 
 ## 🚀 Usage Guide
