@@ -4,6 +4,41 @@ A complete, first-principles implementation of an Orthogonal Frequency-Division 
 
 -----
 
+#Summary 
+📡 TL;DR: IEEE 802.11n HT Packet Structure & Simulation
+
+🧱 HT Packet Block Order
+The time-domain waveform is concatenated in the following sequence:
+[ HT-STF | HT-LTF | HT-SIG | HT-DATA ]
+
+⚙️ Block Functions & Generation
+
+    HT-STF (Short Training Field): * Purpose: AGC convergence and coarse timing synchronization.
+
+        Generation: A sparse sequence on every 4th subcarrier creates a periodic time-domain signal. No Cyclic Prefix (CP) is added.
+
+    HT-LTF (Long Training Field): * Purpose: Channel estimation at the receiver.
+
+        Generation: Known BPSK symbols on all active subcarriers, followed by IFFT and CP insertion.
+
+    HT-SIG (Signal Field): * Purpose: Carries PHY control info (e.g., MCS, payload length).
+
+        Generation: Control bits are BPSK-modulated on data subcarriers with pilots, followed by IFFT and CP. (Consists of exactly two OFDM symbols).
+
+    HT-DATA (Payload): * Purpose: User data transmission.
+
+        Generation: Standard OFDM chain: bits → scrambler → interleaver → QAM mapper → pilots → IFFT → CP.
+
+⚡ Power Normalization
+To ensure mathematical consistency, normalization is applied after IFFT and before CP insertion. Each individual OFDM symbol (HT-LTF, HT-SIG, and HT-DATA) is independently normalized to unit average power. HT-STF is normalized directly in the time domain. This guarantees no power fluctuations when all packet fields are concatenated.
+
+📶 SNR Definition
+In this simulation, SNR is defined per received complex time-domain sample.
+
+    The channel noise variance (σ2) is calculated using the average power of the entire transmitted packet (including STF, LTF, SIG, DATA, and all CPs), not just the data symbols.
+
+    Note: Because the CP and pilot symbols consume transmit energy but do not carry new payload bits, the effective payload Eb​/N0​ is lower than the plotted sample SNR.
+
 ## 🛠️ System Architecture
 
 The simulation models a complete transmit (TX) and receive (RX) chain over an Additive White Gaussian Noise (AWGN) channel.
