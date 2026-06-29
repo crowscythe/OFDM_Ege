@@ -1,16 +1,29 @@
 # OFDM_Ege — Simplified IEEE 802.11n HT Packet (Base MATLAB)
 
-A from-scratch **IEEE 802.11n HT** OFDM transmitter/receiver written in **pure MATLAB** (no toolboxes). It builds a full HT packet, sends it through an AWGN channel, then recovers it with **real synchronization, channel estimation and Viterbi decoding** — and measures BER vs SNR. The scrambler, convolutional encoder, Viterbi decoder, CRC, packet detector and timing recovery are all hand-rolled.
+> From-scratch **IEEE 802.11n HT** OFDM link in **pure MATLAB** (no toolboxes): build a packet → push it through AWGN → recover it with real sync, channel estimation and Viterbi → plot BER. Scrambler, encoder, Viterbi, CRC, packet detector and timing are all hand-rolled.
 
-**Signal chain:**
+### How it works, step by step
+
 ```
-bits → scrambler → conv. code (BCC) + puncturing → interleaver → QAM → IFFT + CP
-     → [ HT-STF | HT-LTF | HT-SIG | HT-DATA ] → AWGN
-     → STF detect → LTF timing + channel est → equalize → QAM demap
-     → deinterleave → depuncture → Viterbi → descramble → BER
+ TX  ①  random bits
+     ②  scramble              (LFSR  x⁷+x⁴+1)
+     ③  conv. code + puncture (K=7,  rate 1/2 · 2/3 · 3/4)
+     ④  interleave
+     ⑤  QAM map               (QPSK / 16-QAM / 64-QAM, Gray)
+     ⑥  IFFT + cyclic prefix
+                 │
+                 ▼  assemble
+ PKT     [ HT-STF │ HT-LTF │ HT-SIG │ HT-DATA ]
+                 │
+                 ▼  + AWGN noise
+ RX  ⑦  detect packet         (HT-STF autocorrelation)
+     ⑧  fine timing + channel (HT-LTF)
+     ⑨  equalize + QAM demap
+     ⑩  deinterleave → depuncture → Viterbi
+     ⑪  descramble  →  BER
 ```
 
-Run **`802.11_V4.m`** in MATLAB. Compare against theory with **`compare_theory.m`**.
+Run **`802.11_V4.m`** in MATLAB; compare against theory with **`compare_theory.m`**.
 
 ---
 
