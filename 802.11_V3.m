@@ -1,4 +1,3 @@
-```matlab
 %==========================================================================
 % Simplified OFDM transceiver using only base MATLAB functions (no toolboxes)
 %
@@ -635,4 +634,3 @@ ylabel('Bit Error Rate (BER)');
 title(sprintf(['Simplified 802.11n HT packet OFDM BER vs sample SNR ' ...
                '(%s, Nfft=%d, CP=%d, Data=%d, Pilots=%d)'], ...
       modType, Nfft, cpLen, numDataSubc, numPilotSubc));
-```
