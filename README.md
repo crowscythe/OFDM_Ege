@@ -23,7 +23,7 @@
      ⑪  descramble  →  BER
 ```
 
-Run **`802.11_V4.m`** in MATLAB; compare against theory with **`compare_theory.m`**.
+Run **`802.11_V4.m`** in MATLAB.
 
 ---
 
@@ -51,15 +51,6 @@ Coded BER vs packet SNR (rate 1/2, AWGN, averaged over 15 packets/point):
 | ![QPSK](QPSK_BER.png) | ![16-QAM](16QAM_BER.png) | ![64-QAM](64QAM_BER.png) |
 
 Error-free around **~7 dB (QPSK)**, **~13 dB (16-QAM)**, **~19 dB (64-QAM)** — higher-order modulation = more throughput, but needs more SNR.
-
-### vs. theory
-
-Simulated **coded** BER overlaid on textbook **uncoded** AWGN curves (`compare_theory.m`):
-
-![Sim vs theory](compare_BER.png)
-
-- Modulation ordering matches theory exactly → the chain is correct.
-- Coded curves cross the uncoded ones: a bit worse at very low SNR, then a steep waterfall with **~3–4 dB coding gain** — the classic hard-decision convolutional-code behaviour.
 
 ---
 
